@@ -1,0 +1,48 @@
+import bpy
+
+# Set frame range
+bpy.context.scene.frame_start = 1
+bpy.context.scene.frame_end = 120
+
+# Get the active object
+obj = bpy.context.active_object
+
+# Create a new curve object
+curve = bpy.data.curves.new('curve', 'CURVE')
+curve.dimensions = '3D'
+spline = curve.splines.new('BEZIER')
+
+# Iterate through the frames
+for frame in range(bpy.context.scene.frame_start, bpy.context.scene.frame_end+1):
+
+    # Set the current frame
+    bpy.context.scene.frame_set(frame)
+    
+    # Get the location of the empty at the current frame
+    loc = obj.matrix_world.translation
+    
+    # Add a new point to the curve
+    spline.bezier_points.add(1)
+    point = spline.bezier_points[-1]
+    point.co = loc
+    point.handle_left_type = 'AUTO'
+    point.handle_right_type = 'AUTO'
+    
+# Create a new object from the curve
+curve_object = bpy.data.objects.new('curve_object', curve)
+bpy.context.scene.collection.objects.link(curve_object)
+
+# Convert the curve object to a mesh object
+bpy.context.view_layer.objects.active = curve_object
+bpy.ops.object.convert(target='MESH', keep_original=False)
+
+# Select all vertices of the mesh object
+bpy.ops.object.mode_set(mode='EDIT')
+bpy.ops.mesh.select_all(action='SELECT')
+
+# Remove duplicate vertices
+bpy.ops.mesh.remove_doubles()
+
+# Convert the mesh object back to a curve object
+bpy.ops.object.mode_set(mode='OBJECT')
+bpy.ops.object.convert(target='CURVE', keep_original=False)

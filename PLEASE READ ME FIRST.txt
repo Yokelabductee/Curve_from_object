@@ -1,0 +1,10 @@
+this code was created by me @yokel_abductee (on twitter) with help from chatGPT using my input and troubleshooting.
+
+I originally wanted to track the motion path and convert it but was not successful until I asked it to track the location of the empty on each frame in a frame range from frame 1 to frame 120 which was the frame range of the file I was using as an experiment, which was the Endless engines V2 blender file created by @pwnisher a.k.a Clinton jones.
+
+this was because I realised that people may use car rigging software that required a path to drive a vehicle, now I did create this after the deadline and winner had been anounced, but this could be handy for anyone who needs to create a path/curve object based on the location of an empty or other object over any frame range. 
+
+IMPORTANT NOTE.
+
+when this code is run it will create an extra vertex at the start of the curve object which I could not get chatGPT to help with, so you will need to manually remove the first errant vertex and reset the origin to the true first vertex.
+
