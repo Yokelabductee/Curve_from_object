@@ -8,3 +8,6 @@ IMPORTANT NOTE.
 
 when this code is run it will create an extra vertex at the start of the curve object which I could not get chatGPT to help with, so you will need to manually remove the first errant vertex and reset the origin to the true first vertex.
 
+also if you enter a frame range shorter than your scenes range it will update the scene range to the shorter number.
+
+For example: if your scene range is 120 frames and you edit and run code for 70 frames the overall scene will now be 70 frames long so will need to readjust back to 120 frames for your scene.
