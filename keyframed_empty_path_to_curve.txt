@@ -32,17 +32,26 @@ for frame in range(bpy.context.scene.frame_start, bpy.context.scene.frame_end+1)
 curve_object = bpy.data.objects.new('curve_object', curve)
 bpy.context.scene.collection.objects.link(curve_object)
 
-# Convert the curve object to a mesh object
+# Go to frame 1
+bpy.context.scene.frame_set(1)
+
+# Make the curve active
 bpy.context.view_layer.objects.active = curve_object
-bpy.ops.object.convert(target='MESH', keep_original=False)
 
-# Select all vertices of the mesh object
+# Set origin to 3D cursor
+bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+
+# Make the curve active and go to edit mode
+bpy.context.view_layer.objects.active = curve_object
 bpy.ops.object.mode_set(mode='EDIT')
-bpy.ops.mesh.select_all(action='SELECT')
 
-# Remove duplicate vertices
-bpy.ops.mesh.remove_doubles()
+# Deselect all control points and select the first vertex
+for point in curve_object.data.splines.active.bezier_points:
+    point.select_control_point = False
+curve_object.data.splines.active.bezier_points[0].select_control_point = True
 
-# Convert the mesh object back to a curve object
+# Delete the first vertex
+bpy.ops.curve.delete(type='VERT')
+
+# Go back to object mode
 bpy.ops.object.mode_set(mode='OBJECT')
-bpy.ops.object.convert(target='CURVE', keep_original=False)
