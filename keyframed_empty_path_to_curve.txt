@@ -7,6 +7,13 @@ bpy.context.scene.frame_end = 120
 # Get the active object
 obj = bpy.context.active_object
 
+# Create an origin marker empty at the location of the active object
+origin_marker = bpy.data.objects.new("origin_marker", None)
+origin_marker.empty_display_size = 0.1
+origin_marker.empty_display_type = 'PLAIN_AXES'
+origin_marker.location = obj.location
+bpy.context.scene.collection.objects.link(origin_marker)
+
 # Create a new curve object
 curve = bpy.data.curves.new('curve', 'CURVE')
 curve.dimensions = '3D'
@@ -35,23 +42,25 @@ bpy.context.scene.collection.objects.link(curve_object)
 # Go to frame 1
 bpy.context.scene.frame_set(1)
 
-# Make the curve active
-bpy.context.view_layer.objects.active = curve_object
+# Set 3D cursor to origin of origin marker
+bpy.context.scene.cursor.location = origin_marker.location
+bpy.context.view_layer.objects.active = origin_marker
 
-# Set origin to 3D cursor
+# Make the curve the only active object and assign its origin to the 3D cursor
+bpy.ops.object.select_all(action='DESELECT')
+curve_object.select_set(True)
+bpy.context.view_layer.objects.active = curve_object
 bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
 
-# Make the curve active and go to edit mode
-bpy.context.view_layer.objects.active = curve_object
+# Go to edit mode and delete the first control point
 bpy.ops.object.mode_set(mode='EDIT')
-
-# Deselect all control points and select the first vertex
-for point in curve_object.data.splines.active.bezier_points:
-    point.select_control_point = False
+bpy.ops.curve.select_all(action='DESELECT')
 curve_object.data.splines.active.bezier_points[0].select_control_point = True
-
-# Delete the first vertex
 bpy.ops.curve.delete(type='VERT')
 
-# Go back to object mode
+# Go back to object mode, deselect and delete the origin marker
 bpy.ops.object.mode_set(mode='OBJECT')
+bpy.ops.object.select_all(action='DESELECT')
+origin_marker.select_set(True)
+bpy.ops.object.delete(use_global=False)
+
